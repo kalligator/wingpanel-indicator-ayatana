@@ -24,7 +24,7 @@ public class AyatanaCompatibility.IndicatorFactory : Object, IndicatorLoader {
     public Gee.Collection<IndicatorIface> get_indicators () {
         if (indicators == null) {
             indicators = new Gee.LinkedList<IndicatorIface> ();
-            load_indicator (File.new_for_path (Constants.AYANATAINDICATORDIR), "libapplication.so");
+            load_indicator (File.new_for_path (Constants.AYATANA_INDICATOR_DIR), "libapplication.so");
         }
 
         return indicators.read_only_view;

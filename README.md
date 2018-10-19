@@ -1,25 +1,43 @@
-# Wingpanel Ayatana-Compatibility Indicator
-[![l10n](https://l10n.elementary.io/widgets/wingpanel/wingpanel-indicator-ayatana/svg-badge.svg)](https://l10n.elementary.io/projects/wingpanel/wingpanel-indicator-ayatana)
+# Wingpanel Ayatana-Compatibility Indicator (Community Version)
+A compatibility plug-in that enables ayatana indicators on Wingpanel.
 
-## Building and Installation
+This is needed for third-party indicator support on Elementary OS Juno.
 
-You'll need the following dependencies:
+## Dependencies
 
-* gobject-introspection
-* libglib2.0-dev
-* libgranite-dev
-* libindicator3-dev
-* libwingpanel-2.0-dev
-* meson
-* valac
-    
-Run `meson` to configure the build environment and then `ninja` to build
+You'll need the following dependencies to build wingpanel-indicator-ayatana:
 
-    meson build
-    cd build
-    ninja
-    
+|Dependency|Version|
+|:--|:--|
+|gobject-introspection|*|
+|libglib2.0-dev|*|
+|libgranite-dev|*|
+|libindicator3-dev|*|
+|libwingpanel-2.0-dev|*|
+|meson|0.48 or newer|
+|valac|*|
+
+On ElementaryOS Juno, you will need to install `meson` through `pip3 install meson`.
+
+## Building
+
+Run `meson` to configure the build environment
+
+```bash
+meson build
+```
+
+Then run `ninja` to build
+
+```bash
+cd build
+ninja
+```
+
+## Installation
+
 To install, use `ninja install`
 
-    sudo ninja install
-
+```bash
+sudo ninja install
+```

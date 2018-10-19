@@ -1,7 +1,0 @@
-namespace Constants {
-    public const string AYANATAINDICATORDIR = @AYANATAINDICATORDIR@;
-    public const string DATADIR = @DATADIR@;
-    public const string GETTEXT_PACKAGE = @GETTEXT_PACKAGE@;
-    public const string INDICATORNAME = @INDICATORNAME@;
-    public const string PKGDATADIR = @PKGDATADIR@;
-}

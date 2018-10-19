@@ -1,33 +1,11 @@
+# ----------------------------------------------------------------------------------------------------------------------
+# Project: wingpanel-indicator-ayatana
+#
+# A Wingpanel indicator plug-in that adds ayatana indicator support.
+# ----------------------------------------------------------------------------------------------------------------------
 project('wingpanel-indicator-ayatana', 'vala', 'c')
 
-indicator_name = 'ayatana'
-
-i18n = import('i18n')
-gettext_name = indicator_name + '-indicator'
-
-add_global_arguments('-DGETTEXT_PACKAGE="@0@"'.format(gettext_name),
-                     language: 'c')
-add_project_arguments(['--vapidir', join_paths(meson.current_source_dir(), 'vapi')],
-                      language: 'vala')
-
-wingpanel_dep = dependency('wingpanel-2.0')
-indicator_dir = wingpanel_dep.get_pkgconfig_variable('indicatorsdir')
-
-conf_data = configuration_data()
-conf_data.set_quoted('AYANATAINDICATORDIR', join_paths(get_option('prefix'), indicator_dir))
-conf_data.set_quoted('DATADIR', join_paths(get_option('prefix'), get_option('datadir')))
-conf_data.set_quoted('GETTEXT_PACKAGE', gettext_name)
-conf_data.set_quoted('INDICATORNAME', indicator_name)
-conf_data.set_quoted('PKGDATADIR', join_paths(get_option('prefix'), get_option('datadir')))
-
-config_header = configure_file(
-    input: 'src/config.vala.in',
-    output: 'config.vala',
-    configuration: conf_data
-)
-
-shared_module(
-    indicator_name,
+sources = [
     'src/AyatanaIndicator.vala',
     'src/Indicator.vala',
     'src/IndicatorButton.vala',
@@ -36,13 +14,65 @@ shared_module(
     'src/IndicatorLoader.vala',
     'src/IndicatorObject.vala',
     'src/SubMenuButton.vala',
-    config_header,
-    dependencies: [
-        dependency('granite'),
-        dependency('indicator3-0.4'),
-        wingpanel_dep
-    ],
-    install: true,
+]
+
+dependencies = {
+    'granite':    dependency('granite'),
+    'indicator3': dependency('indicator3-0.4'),
+    'wingpanel2': dependency('wingpanel-2.0')
+}
+
+indicator_name = 'ayatana'
+indicator_dir  = dependencies['wingpanel2'].get_pkgconfig_variable('indicatorsdir')
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Bindings:
+
+add_project_arguments(['--vapidir', join_paths(meson.current_source_dir(), 'vapi')],
+                      language: 'vala')
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Internationalization:
+
+i18n = import('i18n')
+gettext_name = indicator_name + '-indicator'
+
+add_global_arguments('-DGETTEXT_PACKAGE="@0@"'.format(gettext_name),
+                     language: 'c')
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Generated constants:
+
+constants = configuration_data()
+constants.set_quoted('WINGPANEL_INDICATOR_DIR', join_paths(get_option('prefix'), indicator_dir))
+constants.set_quoted('AYATANA_INDICATOR_DIR',   dependencies['indicator3'].get_pkgconfig_variable('indicatordir'))
+constants.set_quoted('INDICATOR_NAME',          indicator_name)
+constants.set_quoted('DATA_DIR',                join_paths(get_option('prefix'), get_option('datadir')))
+constants.set_quoted('GETTEXT_PACKAGE',         gettext_name)
+
+constants_file = configure_file(
+    input: 'src/Constants.vala',
+    output: 'Constants.vala',
+    configuration: constants
+)
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Build:
+
+deps = []
+foreach _,v : dependencies
+    deps += v
+endforeach
+
+shared_module(
+    indicator_name,
+
+    sources,
+    constants_file,
+
+    dependencies: deps,
+
+    install:     true,
     install_dir: indicator_dir
 )
 
