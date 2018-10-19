@@ -31,6 +31,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
     private Gee.HashMap<Gtk.Widget, Gtk.Widget> menu_map;
 
     const int MAX_ICON_SIZE = 24;
+    const int IDEAL_ICON_SIZE = 18;
 
     public Indicator (IndicatorAyatana.ObjectEntry entry, IndicatorAyatana.Object obj, IndicatorIface indicator) {
         string name_hint = entry.name_hint;
@@ -85,7 +86,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                     ensure_max_size (image);
                 }
 
-                image.pixel_size = MAX_ICON_SIZE;
+                image.pixel_size = IDEAL_ICON_SIZE;
 
                 icon.set_widget (IndicatorButton.WidgetSlot.IMAGE, image);
             }
