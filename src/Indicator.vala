@@ -19,10 +19,16 @@ public class AyatanaCompatibility.MetaIndicator : Wingpanel.Indicator {
     private Gee.HashSet<string> blacklist;
     private IndicatorFactory indicator_loader;
 
+    private Gee.LinkedList<AyatanaCompatibility.Indicator> deferred_indicators;
+    private bool wingpanel_defer_register = true;
+    private bool wingpanel_defer_waiting = false;
+
     public MetaIndicator () {
         Object (code_name: "ayatana_compatibility",
                 display_name: _("Ayatana Compatibility"),
                 description:_("Ayatana Compatibility Meta Indicator"));
+
+        deferred_indicators = new Gee.LinkedList<AyatanaCompatibility.Indicator>();
 
         load_blacklist ();
         indicator_loader = new IndicatorFactory ();
@@ -55,7 +61,45 @@ public class AyatanaCompatibility.MetaIndicator : Wingpanel.Indicator {
             return;
         }
 
-        Wingpanel.IndicatorManager.get_default ().register_indicator (indicator.code_name, indicator);
+        if (wingpanel_defer_register) {
+            defer_create_entry (indicator);
+        } else {
+            Wingpanel.IndicatorManager.get_default ().register_indicator (indicator.code_name, indicator);
+        }
+    }
+
+    private void defer_create_entry (Indicator deferred_indicator) {
+        deferred_indicators.add (deferred_indicator);
+
+        if (wingpanel_defer_waiting == true) {
+            // We already have a timer waiting to register deferred indicators.
+            return;
+        }
+
+        GLib.Timeout.add(250, () => {
+            // If there are any unrealized widgets, we need to keep waiting.
+            foreach (Wingpanel.Indicator indicator in Wingpanel.IndicatorManager.get_default ().get_indicators ()) {
+                if (indicator.visible && indicator.get_display_widget ().get_realized () == false) return true;
+            }
+
+            // Have all indicator display widgets resize themselves later.
+            // This fixes the bluetooth indicator having zero width.
+            foreach (Wingpanel.Indicator indicator in Wingpanel.IndicatorManager.get_default ().get_indicators ()) {
+                if (indicator.visible) indicator.get_display_widget ().queue_resize ();
+            }
+
+            // Register the deferred indicators.
+            Wingpanel.IndicatorManager manager = Wingpanel.IndicatorManager.get_default ();
+            foreach (Wingpanel.Indicator indicator in deferred_indicators) {
+                manager.register_indicator (indicator.code_name, indicator);
+            }
+
+            deferred_indicators.clear();
+            wingpanel_defer_register = false; // Any future indicators are probably safe.
+            return false;
+        });
+
+
     }
 
     private void delete_entry (Indicator indicator) {
@@ -63,7 +107,7 @@ public class AyatanaCompatibility.MetaIndicator : Wingpanel.Indicator {
     }
 
     public override Gtk.Widget? get_widget () {
-        return new Gtk.Label ("should not be shown");
+        return new Gtk.Label ("should not be shown - wingpanel-ayatana-indicator");
     }
 
     public override void opened () {
