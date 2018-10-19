@@ -28,7 +28,14 @@ public class AyatanaCompatibility.IndicatorButton : Gtk.Box {
         set_orientation (Gtk.Orientation.HORIZONTAL);
         set_homogeneous (false);
 
-        get_style_context ().add_class ("composited-indicator");
+        // Fix padding.
+        Gtk.StyleContext style = get_style_context ();
+        Gtk.CssProvider provider = new Gtk.CssProvider ();
+
+        provider.load_from_data (".ayatana-indicator { padding: 0px; }");
+
+        style.add_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+        style.add_class ("ayatana-indicator");
     }
 
     public void set_widget (WidgetSlot slot, Gtk.Widget widget) {
