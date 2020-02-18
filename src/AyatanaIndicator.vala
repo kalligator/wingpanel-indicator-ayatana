@@ -135,8 +135,9 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                      * the menu is popuped
                      */
                     reloaded = true;
-                    entry.menu.popup (null, null, null, 0, Gtk.get_current_event_time ());
-                    entry.menu.popdown ();
+                    //entry.menu.popup (null, null, null, 0, Gtk.get_current_event_time ());
+                    entry.menu.popup_at_pointer();
+                    //entry.menu.popdown ();
                 }
 
                 return Gdk.EVENT_PROPAGATE;
@@ -299,7 +300,6 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 				button.active = (item as Gtk.RadioMenuItem).get_active ();
 			}
             (item as Gtk.CheckMenuItem).notify["label"].connect (() => {
-                //(button as Wingpanel.Widgets.Button).set_caption ((item as Gtk.MenuItem).get_label ().replace ("_", ""));
                 (button as Gtk.ModelButton).text= ((item as Gtk.MenuItem).get_label ().replace ("_", ""));
             });
 
@@ -313,7 +313,6 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                 scroll_sub.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
                 var sub_stack = new Gtk.Grid ();
                 scroll_sub.add (sub_stack);
-                //var back_button = new Wingpanel.Widgets.Button (_("Back"));
                 var back_button = new Gtk.ModelButton();
                 back_button.text = "_(\"Back\")";
                 back_button.clicked.connect (() => {
@@ -321,7 +320,8 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                 });
                 sub_stack.attach (back_button, 0, pos++, 1, 1);
                 sub_stack.attach (new Wingpanel.Widgets.Separator (), 0, pos++, 1, 1);
-                submenu.popup (null, null, null, 0, Gtk.get_current_event_time ());
+                //submenu.popup (null, null, null, 0, Gtk.get_current_event_time ());
+                submenu.popup_at_pointer();
                 submenu.insert.connect ((sub_item) => {
                     var sub_menu_item = convert_menu_widget (sub_item);
 
@@ -331,7 +331,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                         sub_stack.attach (sub_menu_item, 0, pos++, 1, 1);
                     }
                 });
-                submenu.popdown ();
+                //submenu.popdown ();
                 main_stack.add (scroll_sub);
                 //button = new SubMenuButton (label);
 				button = new Gtk.ModelButton();
