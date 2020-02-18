@@ -207,8 +207,8 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
             button.no_show_all = true;
             button.hide ();
         });
-        item.state_changed.connect ((type) => {
-            button.set_state (item.get_state ());
+		item.state_flags_changed.connect  ((type) => {
+           button.set_state_flags (item.get_state_flags (),true);
         });
     }
 
@@ -236,7 +236,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
         atk.get_property ("accessible_role", ref val);
         var item_type = val.get_int ();
 
-        var state = item.get_state ();
+        var state = item.get_state_flags ();
         var active = (item as Gtk.CheckMenuItem).get_active ();
 
         /* detect if it has a image */
@@ -259,8 +259,8 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 
                 return false;
             });
-            button.set_state (state);
-
+            button.set_state_flags(state,false);
+            
             connect_signals (item, button);
             (item as Gtk.CheckMenuItem).toggled.connect (() => {
                 button.set_active ((item as Gtk.CheckMenuItem).get_active ());
@@ -292,8 +292,9 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                 (button as Wingpanel.Widgets.Button).set_caption ((item as Gtk.MenuItem).get_label ().replace ("_", ""));
             });
 
-            button.set_state (state);
-
+            //button.set_state (state);
+			button.set_state_flags(state,true); 
+			
             var submenu = (item as Gtk.MenuItem).submenu;
 
             if (submenu != null) {
