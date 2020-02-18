@@ -232,7 +232,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
          * 34 = MENU_ITEM  8 = CHECKBOX  32 = SUBMENU 44 = RADIO
          */
         const int ATK_CHECKBOX =8;
-		//const int ATK_RADIO =44;
+		const int ATK_RADIO =44;
 		
         var atk = item.get_accessible ();
         Value val = Value (typeof (int));
@@ -283,8 +283,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                     warning (e.message);
                 }
             }
-
-            if (image != null && image.pixbuf != null) {
+			if (image != null && image.pixbuf != null) {
                 //button = new Wingpanel.Widgets.Button (label);
                 button = new Gtk.ModelButton();
                 button.text=label;
@@ -295,6 +294,10 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                 button = new Gtk.ModelButton();
                 button.text=label;
             }
+            if (item_type == ATK_RADIO) {
+				button.role=Gtk.ButtonRole.RADIO;
+				button.active = (item as Gtk.RadioMenuItem).get_active ();
+			}
             (item as Gtk.CheckMenuItem).notify["label"].connect (() => {
                 //(button as Wingpanel.Widgets.Button).set_caption ((item as Gtk.MenuItem).get_label ().replace ("_", ""));
                 (button as Gtk.ModelButton).text= ((item as Gtk.MenuItem).get_label ().replace ("_", ""));
