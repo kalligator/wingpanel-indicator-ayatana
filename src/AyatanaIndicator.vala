@@ -231,6 +231,9 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
          * get item type from atk accessibility
          * 34 = MENU_ITEM  8 = CHECKBOX  32 = SUBMENU 44 = RADIO
          */
+        const int ATK_CHECKBOX =8;
+		//const int ATK_RADIO =44;
+		
         var atk = item.get_accessible ();
         Value val = Value (typeof (int));
         atk.get_property ("accessible_role", ref val);
@@ -251,19 +254,18 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
             }
         }
 
-        if (item_type == 8) {
+        if (item_type == ATK_CHECKBOX) {
             var button = new Wingpanel.Widgets.Switch (label, active);
             button.get_switch ().state_set.connect ((b) => {
                 (item as Gtk.CheckMenuItem).set_active (b);
                 close ();
-
                 return false;
             });
             button.set_state_flags(state,false);
             
             connect_signals (item, button);
             (item as Gtk.CheckMenuItem).toggled.connect (() => {
-                button.set_active ((item as Gtk.CheckMenuItem).get_active ());
+                button.active = ((item as Gtk.CheckMenuItem).get_active ());
             });
 
             return button;
@@ -271,8 +273,8 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 
         /* convert menuitem to a indicatorbutton */
         if (item is Gtk.MenuItem) {
-            Gtk.Button button;
-
+            //Gtk.Button button;
+			Gtk.ModelButton button;
             if (image != null && image.pixbuf == null && image.icon_name != null) {
                 try {
                     Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default ();
@@ -283,16 +285,21 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
             }
 
             if (image != null && image.pixbuf != null) {
-                button = new Wingpanel.Widgets.Button (label);
-                (button as Wingpanel.Widgets.Button).set_pixbuf (image.pixbuf);
+                //button = new Wingpanel.Widgets.Button (label);
+                button = new Gtk.ModelButton();
+                button.text=label;
+                //(button as Wingpanel.Widgets.Button).set_pixbuf (image.pixbuf);
+                (button as Gtk.ModelButton).icon= (image.pixbuf);
             } else {
-                button = new Wingpanel.Widgets.Button (label);
+                //button = new Wingpanel.Widgets.Button (label);
+                button = new Gtk.ModelButton();
+                button.text=label;
             }
             (item as Gtk.CheckMenuItem).notify["label"].connect (() => {
-                (button as Wingpanel.Widgets.Button).set_caption ((item as Gtk.MenuItem).get_label ().replace ("_", ""));
+                //(button as Wingpanel.Widgets.Button).set_caption ((item as Gtk.MenuItem).get_label ().replace ("_", ""));
+                (button as Gtk.ModelButton).text= ((item as Gtk.MenuItem).get_label ().replace ("_", ""));
             });
 
-            //button.set_state (state);
 			button.set_state_flags(state,true); 
 			
             var submenu = (item as Gtk.MenuItem).submenu;
@@ -303,7 +310,9 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                 scroll_sub.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
                 var sub_stack = new Gtk.Grid ();
                 scroll_sub.add (sub_stack);
-                var back_button = new Wingpanel.Widgets.Button (_("Back"));
+                //var back_button = new Wingpanel.Widgets.Button (_("Back"));
+                var back_button = new Gtk.ModelButton();
+                back_button.text = "_(\"Back\")";
                 back_button.clicked.connect (() => {
                     main_stack.set_visible_child (main_grid);
                 });
@@ -321,7 +330,9 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                 });
                 submenu.popdown ();
                 main_stack.add (scroll_sub);
-                button = new SubMenuButton (label);
+                //button = new SubMenuButton (label);
+				button = new Gtk.ModelButton();
+                button.text= label; 
                 button.clicked.connect (() => {
                     main_stack.set_visible_child (scroll_sub);
                     main_stack.show_all ();
