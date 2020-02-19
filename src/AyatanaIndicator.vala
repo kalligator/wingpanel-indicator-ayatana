@@ -32,7 +32,10 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 
     const int MAX_ICON_SIZE = 24;
     const int IDEAL_ICON_SIZE = 18;
-
+	//group radio buttons
+    private string? group_radio=null ;
+	private int nb_group=0;
+	
     public Indicator (IndicatorAyatana.ObjectEntry entry, IndicatorAyatana.Object obj, IndicatorIface indicator) {
         string name_hint = entry.name_hint;
         if (name_hint == null) {
@@ -135,8 +138,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                      * the menu is popuped
                      */
                     reloaded = true;
-                    //entry.menu.popup (null, null, null, 0, Gtk.get_current_event_time ());
-                    entry.menu.popup_at_pointer();
+                    entry.menu.popup_at_widget(icon.parent,0,0);
                     //entry.menu.popdown ();
                 }
 
@@ -242,7 +244,9 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 
         var state = item.get_state_flags ();
         var active = (item as Gtk.CheckMenuItem).get_active ();
-
+		//RAZ group_radio
+        group_radio = ( item_type == ATK_RADIO)? group_radio:null;
+		
         /* detect if it has a image */
         Gtk.Image? image = null;
         var child = (item as Gtk.Bin).get_child ();
@@ -272,6 +276,28 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
             return button;
         }
 
+        //RADIO BUTTON
+		if (item_type == ATK_RADIO) {
+			var button = new Gtk.ModelButton();
+            button.text=label;
+			
+			if (group_radio == null) 
+				nb_group++;
+				{group_radio="G"+nb_group.to_string();}
+			
+            button.role=Gtk.ButtonRole.RADIO;
+		    button.menu_name= group_radio;
+			button.text=label;
+			button.active =(item as Gtk.RadioMenuItem).get_active ();
+			
+			
+            button.activate.connect (() => {
+                    item.activate ();
+                });
+			connect_signals (item, button);
+			return button;
+		}
+		
         /* convert menuitem to a indicatorbutton */
         if (item is Gtk.MenuItem) {
             //Gtk.Button button;
@@ -284,17 +310,11 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                     warning (e.message);
                 }
             }
+            button = new Gtk.ModelButton();
+            button.text=label;
 			if (image != null && image.pixbuf != null) {
-                //button = new Wingpanel.Widgets.Button (label);
-                button = new Gtk.ModelButton();
-                button.text=label;
-                //(button as Wingpanel.Widgets.Button).set_pixbuf (image.pixbuf);
                 (button as Gtk.ModelButton).icon= (image.pixbuf);
-            } else {
-                //button = new Wingpanel.Widgets.Button (label);
-                button = new Gtk.ModelButton();
-                button.text=label;
-            }
+            } 
             if (item_type == ATK_RADIO) {
 				button.role=Gtk.ButtonRole.RADIO;
 				button.active = (item as Gtk.RadioMenuItem).get_active ();
@@ -320,8 +340,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                 });
                 sub_stack.attach (back_button, 0, pos++, 1, 1);
                 sub_stack.attach (new Wingpanel.Widgets.Separator (), 0, pos++, 1, 1);
-                //submenu.popup (null, null, null, 0, Gtk.get_current_event_time ());
-                submenu.popup_at_pointer();
+                submenu.popup_at_widget(button,0,0);
                 submenu.insert.connect ((sub_item) => {
                     var sub_menu_item = convert_menu_widget (sub_item);
 
@@ -366,7 +385,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 
         if (pixbuf != null && pixbuf.get_height () > MAX_ICON_SIZE) {
             image.pixbuf = pixbuf.scale_simple ((int)((double)MAX_ICON_SIZE / pixbuf.get_height () * pixbuf.get_width ()),
-                                                MAX_ICON_SIZE, Gdk.InterpType.HYPER);
+            MAX_ICON_SIZE, Gdk.InterpType.HYPER);
         }
     }
 }
