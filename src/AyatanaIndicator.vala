@@ -32,9 +32,9 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 
     const int MAX_ICON_SIZE = 24;
     const int IDEAL_ICON_SIZE = 18;
-	//group radio buttons
-    private string? group_radio=null ;
-	private int nb_group=0;
+    
+	//grouping radio buttons
+	private Gtk.RadioButton? group_radio=null ;
 	
     public Indicator (IndicatorAyatana.ObjectEntry entry, IndicatorAyatana.Object obj, IndicatorIface indicator) {
         string name_hint = entry.name_hint;
@@ -219,11 +219,11 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
     private Gtk.Widget? convert_menu_widget (Gtk.Widget item) {
         /* seperator are GTK.SeparatorMenuItem, return a separator */
         if (item is Gtk.SeparatorMenuItem) {
-            var seperator =  new Wingpanel.Widgets.Separator ();
+            var separator =  new Wingpanel.Widgets.Separator ();
 
-            connect_signals (item, seperator);
-
-            return seperator;
+            connect_signals (item, separator);
+			group_radio = null; 
+            return separator;
         }
 
         /* all other items are genericmenuitems */
@@ -243,6 +243,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
         var item_type = val.get_int ();
 
         var state = item.get_state_flags ();
+        // concern radiobuttons too 
         var active = (item as Gtk.CheckMenuItem).get_active ();
 		//RAZ group_radio
         group_radio = ( item_type == ATK_RADIO)? group_radio:null;
@@ -278,22 +279,17 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 
         //RADIO BUTTON
 		if (item_type == ATK_RADIO) {
-			var button = new Gtk.ModelButton();
-            button.text=label;
-			
-			if (group_radio == null) 
-				nb_group++;
-				{group_radio="G"+nb_group.to_string();}
-			
-            button.role=Gtk.ButtonRole.RADIO;
-		    button.menu_name= group_radio;
-			button.text=label;
-			button.active =(item as Gtk.RadioMenuItem).get_active ();
-			
+			var button= new Gtk.RadioButton.with_label_from_widget(group_radio,label);
+			if (group_radio==null) {group_radio=button;}
+			button.margin = 5;
+           
+			button.set_active(active);
+			button.active=active;
 			
             button.activate.connect (() => {
-                    item.activate ();
-                });
+				item.activate(); 
+            });
+         
 			connect_signals (item, button);
 			return button;
 		}
