@@ -289,9 +289,9 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                     item.activate ();
                 });
             //item -> gtk.button
-           (item as Gtk.CheckMenuItem).toggled.connect (() => {
+           /*(item as Gtk.CheckMenuItem).toggled.connect (() => {
 				button.active = (item as Gtk.CheckMenuItem).get_active ();
-            });
+            });*/
 			
 			return button;
 		}
