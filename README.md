@@ -9,7 +9,7 @@ let these indicators appear in your panel.
 <h1>Installation</h1>
 Download the last release (zip) et extract files<br/>
 
-<h2>Depedencies</h2>
+<h2>Dependencies</h2>
 
 You'll need the following dependencies to build :
 
@@ -26,3 +26,8 @@ ninja
 sudo ninja install
 </pre>
 
+<h1>uninstall</h1>
+Open a terminal in the build folder.
+<pre>sudo ninja uninstall
+killall wingpanel
+</pre>
