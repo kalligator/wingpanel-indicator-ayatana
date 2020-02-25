@@ -7,14 +7,14 @@ let these indicators appear in your panel.
 <p align="center"><img src="screenshot.png"/> </p>
 
 <h1>Installation</h1>
-Download the last release (zip) et extract files<br/>
+Download the last release (zip) and extract files<br/>
 
 <h2>Dependencies</h2>
 
 You'll need the following dependencies to build :
 
-<pre>sudo apt-get install gobject-introspection libglib2.0-dev libgranite-dev libindicator3-dev 
-sudo apt-get install libwingpanel-2.0-dev valac gcc gtk+-3.0 meson </pre/>
+<pre>sudo apt-get install libglib2.0-dev libgranite-dev libindicator3-dev 
+sudo apt-get install libwingpanel-2.0-dev valac gcc meson </pre/>
 
 <h2>Build with meson</h2>
 

@@ -138,7 +138,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                      * the menu is popuped
                      */
                     reloaded = true;
-                    entry.menu.popup_at_widget(icon.parent,0,0);
+                    //entry.menu.popup_at_widget(icon.parent,0,0);
                     //entry.menu.popdown ();
                 }
 
@@ -331,6 +331,8 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                 scroll_sub.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
                 var sub_stack = new Gtk.Grid ();
                 scroll_sub.add (sub_stack);
+                
+                /* usefull ? 
                 var back_button = new Gtk.ModelButton();
                 back_button.text = "_(\"Back\")";
                 back_button.clicked.connect (() => {
@@ -338,7 +340,16 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                 });
                 sub_stack.attach (back_button, 0, pos++, 1, 1);
                 sub_stack.attach (new Wingpanel.Widgets.Separator (), 0, pos++, 1, 1);
-                submenu.popup_at_widget(button,0,0);
+                ********** */
+                
+                //convert
+                foreach (var sub_item in submenu.get_children ()) {
+					var sub_menu_item = convert_menu_widget (sub_item);
+					connect_signals (sub_item, sub_menu_item);
+					sub_stack.attach (sub_menu_item, 0, pos++, 1, 1);
+				}
+				
+				/*submenu.popup_at_widget(button,0,0);
                 submenu.insert.connect ((sub_item) => {
                     var sub_menu_item = convert_menu_widget (sub_item);
 
@@ -348,11 +359,13 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                         sub_stack.attach (sub_menu_item, 0, pos++, 1, 1);
                     }
                 });
-                //submenu.popdown ();
+                submenu.popdown (); */
                 main_stack.add (scroll_sub);
-                //button = new SubMenuButton (label);
+                //modelbutton for popup
 				button = new Gtk.ModelButton();
                 button.text= label; 
+                button.menu_name="submenu";
+                
                 button.clicked.connect (() => {
                     main_stack.set_visible_child (scroll_sub);
                     main_stack.show_all ();
