@@ -1,43 +1,28 @@
 # Wingpanel Ayatana-Compatibility Indicator (Community Version)
-A compatibility plug-in that enables ayatana indicators on Wingpanel.
+<h1>Description:</h1>
+Keep compatibility with ubuntu/unity indicators on Elementary OS wingpanel.
+If you want to install applications with indicators like weather forecast, redshift... this plug-in 
+let these indicators appear in your panel. 
 
-This is needed for third-party indicator support on Elementary OS Juno.
+<p align="center"><img src="screenshot.png"/> </p>
 
-## Dependencies
+<h1>Installation</h1>
+Download the last release (zip) et extract files<br/>
 
-You'll need the following dependencies to build wingpanel-indicator-ayatana:
+<h2>Depedencies</h2>
 
-|Dependency|Version|
-|:--|:--|
-|gobject-introspection|*|
-|libglib2.0-dev|*|
-|libgranite-dev|*|
-|libindicator3-dev|*|
-|libwingpanel-2.0-dev|*|
-|meson|0.48 or newer|
-|valac|*|
+You'll need the following dependencies to build :
 
-On ElementaryOS Juno, you will need to install `meson` through `pip3 install meson`.
+<pre>sudo apt-get install gobject-introspection libglib2.0-dev libgranite-dev libindicator3-dev 
+sudo apt-get install libwingpanel-2.0-dev valac gcc gtk+-3.0 meson </pre/>
 
-## Building
+<h2>Build with meson</h2>
 
-Run `meson` to configure the build environment
+Open a Terminal in the extracted folder, build your application with meson and install it with ninja:<br/>
 
-```bash
-meson build
-```
-
-Then run `ninja` to build
-
-```bash
+<pre>meson build --prefix=/usr
 cd build
 ninja
-```
-
-## Installation
-
-To install, use `ninja install`
-
-```bash
 sudo ninja install
-```
+</pre>
+
