@@ -27,11 +27,12 @@ sudo ninja install
 </pre>
 
 <h2>Parameters for Pantheon (eos)</h2>
-4. You need to add Pantheon to the list of desktops, that can work with indicators:
+4. You need to add Pantheon to the list of desktops abled to work with indicators:
 <pre>sudo nano /etc/xdg/autostart/indicator-application.desktop</pre>
 Search the parameter: OnlyShowIn= and add "Pantheon" at the end of the line : 
 <pre>OnlyShowIn=Unity;GNOME;Pantheon;</pre>
-Save your changes (Ctrl+X to quit + Y(es) save the changes + Enter to valid the filename) and <b>reboot<b>.
+Save your changes (Ctrl+X to quit + Y(es) save the changes + Enter to valid the filename).<br/>
+5.<b>reboot</b>.
 
 <h1>uninstall</h1>
 Open a terminal in the build folder.
