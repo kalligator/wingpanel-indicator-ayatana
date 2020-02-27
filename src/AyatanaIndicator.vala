@@ -21,7 +21,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
     private IndicatorButton icon;
 
     private Gtk.Stack main_stack;
-    private Gtk.Grid main_grid;
+    private Gtk.ListBox main_list;
 
     private unowned IndicatorAyatana.ObjectEntry entry;
     private unowned IndicatorAyatana.Object parent_object;
@@ -71,6 +71,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
     }
 
     public override Gtk.Widget get_display_widget () {
+		//show an icon in the panel
         if (icon == null) {
             icon = new IndicatorButton ();
 
@@ -127,7 +128,6 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
         return Gdk.EVENT_PROPAGATE;
     }
 
-    int position = 0;
     public override Gtk.Widget? get_widget () {
         if (main_stack == null) {
             bool reloaded = false;
@@ -138,6 +138,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                      * the menu is popuped
                      */
                     reloaded = true;
+                    //show underlying menu (debug)
                     //entry.menu.popup_at_widget(icon.parent,0,0);
                     //entry.menu.popdown ();
                 }
@@ -147,11 +148,12 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 
             main_stack = new Gtk.Stack ();
             main_stack.map.connect (() => {
-                main_stack.set_visible_child (main_grid);
+				//reload: open first on main_list
+                main_stack.set_visible_child (main_list);
                 reloaded = false;
             });
-            main_grid = new Gtk.Grid ();
-            main_stack.add (main_grid);
+            main_list = new Gtk.ListBox();
+            main_stack.add (main_list);
 
             foreach (var item in entry.menu.get_children ()) {
                 on_menu_widget_insert (item);
@@ -169,7 +171,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 
         if (w != null) {
             menu_map.set (item, w);
-            main_grid.attach (w, 0, position++, 1, 1);
+            main_list.add (w);
             /* menuitem not visible */
             if (!item.get_visible ()) {
                 w.no_show_all = true;
@@ -184,7 +186,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
         var w = menu_map.get (item);
 
         if (w != null) {
-            main_grid.remove (w);
+            main_list.remove (w);
             menu_map.unset (item);
         }
     }
@@ -217,7 +219,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 
     /* convert the menuitems to widgets that can be shown in popovers */
     private Gtk.Widget? convert_menu_widget (Gtk.Widget item) {
-        /* seperator are GTK.SeparatorMenuItem, return a separator */
+        /* separator are GTK.SeparatorMenuItem, return a separator */
         if (item is Gtk.SeparatorMenuItem) {
             var separator =  new Wingpanel.Widgets.Separator ();
 
@@ -262,6 +264,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 
         if (item_type == ATK_CHECKBOX) {
             var button = new Wingpanel.Widgets.Switch (label, active);
+            // b=bool
             button.get_switch ().state_set.connect ((b) => {
                 (item as Gtk.CheckMenuItem).set_active (b);
                 close ();
@@ -288,17 +291,18 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 			button.clicked.connect (() => {
                     item.activate ();
                 });
-            //item -> gtk.button
-           /*(item as Gtk.CheckMenuItem).toggled.connect (() => {
-				button.active = (item as Gtk.CheckMenuItem).get_active ();
-            });*/
+           //concern only visible underlying menu (debug) 
+           /* if (item.get_visible ()) {
+				(item as Gtk.CheckMenuItem).toggled.connect (() => {
+					button.active = (item as Gtk.CheckMenuItem).get_active ();
+				});
+            } */
 			
 			return button;
 		}
 		
         /* convert menuitem to a indicatorbutton */
         if (item is Gtk.MenuItem) {
-            //Gtk.Button button;
 			Gtk.ModelButton button;
             if (image != null && image.pixbuf == null && image.icon_name != null) {
                 try {
@@ -326,40 +330,17 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
             var submenu = (item as Gtk.MenuItem).submenu;
 
             if (submenu != null) {
-                int pos = 0;
                 var scroll_sub = new Gtk.ScrolledWindow (null, null);
                 scroll_sub.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
-                var sub_stack = new Gtk.Grid ();
-                scroll_sub.add (sub_stack);
-                
-                /* usefull ? 
-                var back_button = new Gtk.ModelButton();
-                back_button.text = "_(\"Back\")";
-                back_button.clicked.connect (() => {
-                    main_stack.set_visible_child (main_grid);
-                });
-                sub_stack.attach (back_button, 0, pos++, 1, 1);
-                sub_stack.attach (new Wingpanel.Widgets.Separator (), 0, pos++, 1, 1);
-                ********** */
+                var sub_list = new Gtk.ListBox ();
+                scroll_sub.add (sub_list);
                 
                 //convert
                 foreach (var sub_item in submenu.get_children ()) {
 					var sub_menu_item = convert_menu_widget (sub_item);
 					connect_signals (sub_item, sub_menu_item);
-					sub_stack.attach (sub_menu_item, 0, pos++, 1, 1);
+					sub_list.add (sub_menu_item);
 				}
-				
-				/*submenu.popup_at_widget(button,0,0);
-                submenu.insert.connect ((sub_item) => {
-                    var sub_menu_item = convert_menu_widget (sub_item);
-
-                    if (sub_menu_item != null) {
-
-                        connect_signals (sub_item, sub_menu_item);
-                        sub_stack.attach (sub_menu_item, 0, pos++, 1, 1);
-                    }
-                });
-                submenu.popdown (); */
                 main_stack.add (scroll_sub);
                 //modelbutton for popup
 				button = new Gtk.ModelButton();
