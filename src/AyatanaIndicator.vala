@@ -153,6 +153,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                 reloaded = false;
             });
             main_list = new Gtk.ListBox();
+            main_list.set_size_request(230,-1);
             main_stack.add (main_list);
 
             foreach (var item in entry.menu.get_children ()) {
@@ -285,7 +286,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 			var button= new Gtk.RadioButton.with_label_from_widget(group_radio,label);
 			if (group_radio==null) {group_radio=button;}
 			button.margin = 5;
-           
+            button.set_margin_start(10);
 			button.set_active(active);
 			
 			button.clicked.connect (() => {
