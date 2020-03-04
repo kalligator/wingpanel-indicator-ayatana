@@ -28,8 +28,10 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
     private IndicatorIface indicator;
     private string entry_name_hint;
 
+    //maps to help dynamic changes in menus and submenus
     private Gee.HashMap<Gtk.Widget, Gtk.Widget> menu_map;
-
+	private Gee.HashMap<Gtk.Widget, Gtk.Widget> submenu_map;
+	
     const int MAX_ICON_SIZE = 24;
     const int IDEAL_ICON_SIZE = 18;
     
@@ -342,7 +344,25 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 					connect_signals (sub_item, sub_menu_item);
 					sub_list.add (sub_menu_item);
 				}
+				//dynamic change at run time
+				submenu.insert.connect ((item) => {
+				  var w = convert_menu_widget (item);
+
+        		  if (w != null) {
+            			submenu_map.set (item, w);
+						sub_list.add(w);
+        			}
+				});
+				submenu.remove.connect ((item)=> {
+					var w = menu_map.get (item);
+
+        			if (w != null) {
+            			sub_list.remove (w);
+            			submenu_map.unset (item);
+        			}	
+				});
                 main_stack.add (scroll_sub);
+                
                 //modelbutton for popup
 				button = new Gtk.ModelButton();
                 button.text= label; 
