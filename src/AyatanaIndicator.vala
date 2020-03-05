@@ -337,7 +337,15 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                 scroll_sub.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
                 var sub_list = new Gtk.ListBox ();
                 scroll_sub.add (sub_list);
-                
+                //btn back
+				var btn_back = new Gtk.ModelButton();
+				btn_back.text= _("Back");
+				btn_back.inverted=true;
+				btn_back.menu_name="main_list";
+				btn_back.clicked.connect(()=>{
+					main_stack.set_visible_child (main_list);
+				});
+				sub_list.add(btn_back);
                 //convert
                 foreach (var sub_item in submenu.get_children ()) {
 					var sub_menu_item = convert_menu_widget (sub_item);
