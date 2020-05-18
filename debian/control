@@ -1,4 +1,4 @@
-Source: com.github.lafydev.wingpanel-indicator-ayatana
+Source: com.github.kalligator.wingpanel-indicator-ayatana
 Section: x11
 Priority: optional
 Maintainer: Lafydev <laurencef15@gmail.com>
@@ -12,7 +12,7 @@ Build-Depends: debhelper (>= 10.5.1),
                valac (>= 0.40.0)
 Standards-Version: 3.9.6
 
-Package: com.github.lafydev.wingpanel-indicator-ayatana
+Package: com.github.kalligator.wingpanel-indicator-ayatana
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Enhances: wingpanel
