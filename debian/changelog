@@ -1,4 +1,4 @@
-com.github.kalligator.wingpanel-indicator-ayatana (2.0ubuntu7.1) UNRELEASED; urgency=medium
+com.github.kalligator.wingpanel-indicator-ayatana (2.0ubuntu7.1); urgency=medium
   
   * fix : restored max icon size at 24px
   
