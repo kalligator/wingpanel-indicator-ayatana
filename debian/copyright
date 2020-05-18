@@ -1,6 +1,6 @@
 Format: https://dep.debian.net/deps/dep5
 Upstream-Name: wingpanel-indicator-ayatana
-Source: https://github.com/lafydev/wingpanel-indicator-ayatana
+Source: https://github.com/kalligator/wingpanel-indicator-ayatana
 
 Files: src/* vapi/* debian/*
 Licence: GPL-3.0+
