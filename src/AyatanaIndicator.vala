@@ -33,7 +33,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 	private Gee.HashMap<Gtk.Widget, Gtk.Widget> submenu_map;
 	
     const int MAX_ICON_SIZE = 24;
-    const int IDEAL_ICON_SIZE = 18;
+    const int IDEAL_ICON_SIZE = 24;
     
 	//grouping radio buttons
 	private Gtk.RadioButton? group_radio=null ;
